@@ -3,6 +3,10 @@
     <g transform="translate(112, 16) scale(-4, 4)">
         <path d="M21.742 21.75l-7.563-11.179 7.056-8.321h-2.456l-5.691 6.714-4.54-6.714H2.359l7.29 10.776L2.25 21.75h2.456l6.035-7.118 4.818 7.118h6.191-.008zM7.739 3.818L18.81 20.182h-2.447L5.29 3.818h2.447z" fill="#fff"/>
     </g>
+    <!-- Mask: erase top-left arm of "/" stroke -->
+    <polygon points="22,22 40,22 62,48.39 44,74.95" fill="#000"/>
+    <!-- Mask: erase bottom-right arm of "/" stroke -->
+    <polygon points="66,79.01 80,58.35 106,106 88,106" fill="#000"/>
     <!-- Top horizontal line with angled ends -->
     <polygon points="32.37,31.27 98.32,31.27 102.56,25 27.06,25" fill="#fff"/>
     <!-- Bottom horizontal line with angled ends -->
