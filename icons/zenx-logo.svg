@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+    <rect width="128" height="128" rx="22" fill="#000"/>
+    <g transform="translate(112, 16) scale(-4, 4)">
+        <path d="M21.742 21.75l-7.563-11.179 7.056-8.321h-2.456l-5.691 6.714-4.54-6.714H2.359l7.29 10.776L2.25 21.75h2.456l6.035-7.118 4.818 7.118h6.191-.008zM7.739 3.818L18.81 20.182h-2.447L5.29 3.818h2.447z" fill="#fff"/>
+    </g>
+    <!-- Top horizontal line with angled ends -->
+    <polygon points="32.37,31.27 98.32,31.27 102.56,25 27.06,25" fill="#fff"/>
+    <!-- Bottom horizontal line with angled ends -->
+    <polygon points="29.28,96.74 97.72,96.74 103,103 25.03,103" fill="#fff"/>
+</svg>

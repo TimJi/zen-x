@@ -1,0 +1,28 @@
+ZenX — One-click zen reading mode for X.com articles.
+
+Tired of distractions when reading posts on X.com? ZenX strips away the noise and gives you a clean, focused reading experience.
+
+✦ What it does:
+• Hides comments, replies, and interaction buttons
+• Removes left navigation, right sidebar, and floating layers
+• Hides Premium ads, Grok button, and sticky navigation bar
+• Expands the article to a comfortable reading width (golden ratio)
+• Fixes image display for full-width viewing
+• Automatically scrolls to the top for a fresh start
+
+✦ How to use:
+1. Navigate to any post on X.com (x.com/*/status/*)
+2. Click the ZenX icon in your toolbar
+3. Enjoy distraction-free reading
+
+The extension button is only active on X.com article pages — it stays grayed out everywhere else, so it never gets in your way.
+
+✦ Privacy first:
+ZenX does not collect, store, or transmit any data. Everything runs locally in your browser. No analytics, no cookies, no third-party services.
+
+✦ Permissions explained:
+• activeTab — to modify the current page when you click
+• scripting — to inject zen-mode styles
+• declarativeContent — to enable the button only on article pages
+
+Open source: https://github.com/TimJi/zen-x

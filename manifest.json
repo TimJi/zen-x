@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "ZenX",
   "version": "1.0.0",
-  "description": "一鍵讓 X.com 文章進入 Zen 閱讀模式",
+  "description": "One-click zen reading mode for X.com articles",
+  "homepage_url": "https://github.com/TimJi/zen-x",
   "permissions": ["activeTab", "scripting", "declarativeContent"],
   "action": {
     "default_icon": {
