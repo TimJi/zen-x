@@ -1,0 +1,56 @@
+/* === ZenX CSS 變數（方便調整） === */
+:root {
+  --zen-content-max-width: 890px;
+  --zen-content-width: 61.8vw;
+}
+
+/* === 隱藏留言區（僅保留第一個 cellInnerDiv：原始文章） === */
+[data-testid="cellInnerDiv"]:not(:first-child) {
+  display: none !important;
+}
+[data-testid="cellInnerDiv"]:first-child {
+  position: relative !important;
+  transform: none !important;
+}
+
+/* === 虛擬滾動容器：自適應高度，截斷溢出（多語系） === */
+[aria-label*="時間軸"] > div,
+[aria-label*="Timeline"] > div,
+[aria-label*="timeline"] > div,
+[aria-label*="タイムライン"] > div {
+  min-height: auto !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+/* === 隱藏左側導航欄 === */
+header[role="banner"] {
+  display: none !important;
+}
+
+/* === 隱藏右側側邊欄 === */
+[data-testid="sidebarColumn"] {
+  display: none !important;
+}
+
+/* === 隱藏右下角浮動按鈕 === */
+#layers {
+  display: none !important;
+}
+
+/* === 隱藏互動按鈕列（限定文章區域內） === */
+[data-testid="cellInnerDiv"]:first-child [role="group"] {
+  display: none !important;
+}
+
+/* === 隱藏「發佈你的回覆」輸入框 === */
+[data-testid="inline_reply_offscreen"] {
+  display: none !important;
+}
+
+/* === 黃金比例閱讀寬度，置中 === */
+[data-testid="primaryColumn"] {
+  max-width: var(--zen-content-max-width) !important;
+  width: var(--zen-content-width) !important;
+  margin: 0 auto !important;
+}
