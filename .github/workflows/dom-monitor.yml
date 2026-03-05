@@ -35,13 +35,18 @@ jobs:
           EXISTING_ISSUE=$(gh issue list --state open --search "$ISSUE_TITLE" --json number --jq '.[0].number // empty')
 
           if [ "${{ steps.tests.outcome }}" = "failure" ]; then
-            BODY="## Test failure — $(date -u '+%Y-%m-%d %H:%M UTC')
+            BODY=$(cat <<BODYEOF
+          ## Test failure — $(date -u '+%Y-%m-%d %H:%M UTC')
 
-\`\`\`
-$(cat test-output.txt)
-\`\`\`
+          \`\`\`
+          $(cat test-output.txt)
+          \`\`\`
 
-[View run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          [View run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          BODYEOF
+            )
+            # Strip leading spaces from heredoc
+            BODY=$(echo "$BODY" | sed 's/^          //')
 
             if [ -n "$EXISTING_ISSUE" ]; then
               gh issue comment "$EXISTING_ISSUE" --body "$BODY"
