@@ -1,0 +1,63 @@
+name: DOM Monitor
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Every day at 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run DOM tests
+        id: tests
+        continue-on-error: true
+        run: npx playwright test --reporter=list 2>&1 | tee test-output.txt
+
+      - name: Handle test results
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_TITLE="[ZenX Monitor] DOM compatibility check failed"
+          EXISTING_ISSUE=$(gh issue list --state open --search "$ISSUE_TITLE" --json number --jq '.[0].number // empty')
+
+          if [ "${{ steps.tests.outcome }}" = "failure" ]; then
+            BODY="## Test failure — $(date -u '+%Y-%m-%d %H:%M UTC')
+
+\`\`\`
+$(cat test-output.txt)
+\`\`\`
+
+[View run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+
+            if [ -n "$EXISTING_ISSUE" ]; then
+              gh issue comment "$EXISTING_ISSUE" --body "$BODY"
+              echo "Added comment to issue #$EXISTING_ISSUE"
+            else
+              gh issue create --title "$ISSUE_TITLE" --body "$BODY" --label "bug"
+              echo "Created new issue"
+            fi
+          else
+            if [ -n "$EXISTING_ISSUE" ]; then
+              gh issue close "$EXISTING_ISSUE" --comment "Recovered — all selectors and injection tests passing ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+              echo "Closed issue #$EXISTING_ISSUE"
+            fi
+            echo "All tests passed"
+          fi
+
+      - name: Fail if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
