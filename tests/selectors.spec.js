@@ -2,9 +2,9 @@
 const { test, expect } = require('@playwright/test');
 
 const ARTICLE_URLS = [
-  'https://x.com/elonmusk/status/1585841080431321088',
-  'https://x.com/NASA/status/1562782891469197312',
-  'https://x.com/GitHub/status/1556655450887061504',
+  'https://x.com/thedankoe/status/2010042119121957316',
+  'https://x.com/jimprosser/status/2029699731539255640',
+  'https://x.com/jiayuan_jy/status/2029851505583607961',
 ];
 
 const REQUIRED_SELECTORS = [
@@ -23,16 +23,18 @@ const OPTIONAL_SELECTORS = [
 
 let articlePage;
 
-test.beforeAll(async ({ browser }) => {
+test.beforeAll(async ({ browser }, testInfo) => {
+  testInfo.setTimeout(120000);
   const context = await browser.newContext();
   const page = await context.newPage();
 
   let loaded = false;
   for (const url of ARTICLE_URLS) {
     try {
-      await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
       const column = await page.locator('[data-testid="primaryColumn"]').first();
       await column.waitFor({ state: 'visible', timeout: 10000 });
+      await page.locator('[data-testid="cellInnerDiv"]').first().waitFor({ state: 'attached', timeout: 10000 });
       loaded = true;
       break;
     } catch {

@@ -22,9 +22,16 @@ chrome.runtime.onInstalled.addListener(() => {
 // 點擊 action 按鈕時 toggle zen mode
 chrome.action.onClicked.addListener(async (tab) => {
   if (zenTabs.has(tab.id)) {
-    // 離開 zen：reload 頁面
+    // 離開 zen：執行 restore 腳本並移除 CSS
     zenTabs.delete(tab.id);
-    chrome.tabs.reload(tab.id);
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['zen-restore.js']
+    });
+    await chrome.scripting.removeCSS({
+      target: { tabId: tab.id },
+      files: ['zen-mode.css']
+    });
   } else {
     // 進入 zen：注入 CSS + JS
     await chrome.scripting.insertCSS({
