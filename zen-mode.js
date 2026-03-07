@@ -1,30 +1,48 @@
 // ZenX — DOM 操作（CSS 規則已由 zen-mode.css 處理）
 (() => {
+  // 初始化狀態追蹤
+  window.__zenx = { savedStyles: [], observer: null };
+
+  // 儲存原始 style 並設定新值
+  function saveAndSet(el, prop, value, priority) {
+    window.__zenx.savedStyles.push({
+      el,
+      prop,
+      oldValue: el.style.getPropertyValue(prop),
+      oldPriority: el.style.getPropertyPriority(prop)
+    });
+    if (priority) {
+      el.style.setProperty(prop, value, priority);
+    } else {
+      el.style.setProperty(prop, value);
+    }
+  }
+
   // 文章欄位的父容器也要放寬，讓 primaryColumn 的 margin auto 能置中
   const primary = document.querySelector('[data-testid="primaryColumn"]');
   if (primary) {
     let p = primary.parentElement;
     while (p && p !== document.body) {
-      p.style.maxWidth = '100%';
-      p.style.width = '100%';
+      saveAndSet(p, 'max-width', '100%');
+      saveAndSet(p, 'width', '100%');
       p = p.parentElement;
     }
   }
 
   // 修正圖片顯示
   document.querySelectorAll('img.css-9pa8cd').forEach(img => {
-    img.style.opacity = '1';
-    img.style.position = 'static';
-    img.style.width = '100%';
-    img.style.height = 'auto';
+    saveAndSet(img, 'opacity', '1');
+    saveAndSet(img, 'position', 'static');
+    saveAndSet(img, 'width', '100%');
+    saveAndSet(img, 'height', 'auto');
     const parent = img.parentElement;
     if (parent) {
-      parent.style.position = 'relative';
-      parent.style.overflow = 'visible';
-      parent.style.display = 'block';
+      saveAndSet(parent, 'position', 'relative');
+      saveAndSet(parent, 'overflow', 'visible');
+      saveAndSet(parent, 'display', 'block');
       Array.from(parent.children).forEach(sib => {
         if (sib !== img && getComputedStyle(sib).backgroundImage !== 'none') {
-          sib.style.display = 'none';
+          saveAndSet(sib, 'display', 'none');
         }
       });
     }
@@ -37,7 +55,7 @@
     while (el && el !== document.body) {
       const s = getComputedStyle(el);
       if (s.position === 'sticky' || s.position === 'fixed') {
-        el.style.setProperty('display', 'none', 'important');
+        saveAndSet(el, 'display', 'none', 'important');
         break;
       }
       el = el.parentElement;
@@ -47,7 +65,7 @@
   // 隱藏 Premium 廣告橫幅
   document.querySelectorAll('[role="status"]').forEach(el => {
     if (/premium|升級|upgrade/i.test(el.textContent)) {
-      el.style.setProperty('display', 'none', 'important');
+      saveAndSet(el, 'display', 'none', 'important');
     }
   });
 
@@ -58,7 +76,7 @@
     while (el && el !== document.body) {
       el = el.parentElement;
       if (el && el.querySelector('a[href*="/quotes"]') && el.querySelector('button')) {
-        el.style.setProperty('display', 'none', 'important');
+        saveAndSet(el, 'display', 'none', 'important');
         break;
       }
     }
@@ -70,7 +88,7 @@
     let el = caretBtn.parentElement;
     while (el && el !== document.body) {
       if (el.children.length === 2) {
-        el.style.setProperty('display', 'none', 'important');
+        saveAndSet(el, 'display', 'none', 'important');
         break;
       }
       el = el.parentElement;
@@ -81,11 +99,12 @@
   const observer = new MutationObserver(() => {
     document.querySelectorAll('[role="status"]').forEach(el => {
       if (/premium|升級|upgrade/i.test(el.textContent) && getComputedStyle(el).display !== 'none') {
-        el.style.setProperty('display', 'none', 'important');
+        saveAndSet(el, 'display', 'none', 'important');
       }
     });
   });
   observer.observe(document.body, { childList: true, subtree: true });
+  window.__zenx.observer = observer;
 
   // 回到頁面頂部
   window.scrollTo(0, 0);
