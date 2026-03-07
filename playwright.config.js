@@ -1,5 +1,8 @@
 // @ts-check
 const { defineConfig } = require('@playwright/test');
+const fs = require('fs');
+
+const authFile = '.x-auth.json';
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -9,6 +12,6 @@ module.exports = defineConfig({
   use: {
     headless: true,
     browserName: 'chromium',
-    storageState: '.x-auth.json',
+    ...(fs.existsSync(authFile) ? { storageState: authFile } : {}),
   },
 });
