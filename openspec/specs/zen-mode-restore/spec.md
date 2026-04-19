@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define how zen mode reverses its DOM mutations on exit: the savedStyles bookkeeping during activation, the restore script behavior on deactivation, and the scroll-to-top behavior.
+
+## Requirements
 
 ### Requirement: Save original DOM state before mutations
 The system SHALL save the original inline style value for every DOM property it modifies into `window.__zenx.savedStyles` before overwriting it. Each entry SHALL record the element reference, property name, and original value.

@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define the Playwright-based DOM compatibility tests and Node-based unit tests that guard ZenX against X.com DOM changes and regressions in its state machine.
+
+## Requirements
 
 ### Requirement: Selector existence check
 The test suite SHALL verify that all CSS selectors used by zen-mode.css and zen-mode.js exist on an X.com article page.

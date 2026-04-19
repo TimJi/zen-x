@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define the GitHub Actions workflow that monitors X.com DOM compatibility daily — scheduling, failure-to-issue conversion, and recovery-to-close behavior.
+
+## Requirements
 
 ### Requirement: Daily scheduled GitHub Action
 The CI workflow SHALL run the test suite once per day on a cron schedule. It SHALL also be triggerable manually via workflow_dispatch.

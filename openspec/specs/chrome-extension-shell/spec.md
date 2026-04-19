@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define the Chrome Manifest V3 packaging and permission surface for the ZenX extension — manifest structure, permissions required, action button, service worker entry point, and how script injection is scoped.
+
+## Requirements
 
 ### Requirement: Extension manifest uses Manifest V3
 Extension SHALL use Chrome Manifest V3 format with the following configuration:

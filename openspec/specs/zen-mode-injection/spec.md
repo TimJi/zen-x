@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define the CSS and JS that zen mode injects into an X.com article page: which elements are hidden (sidebar, navigation, drawers, reply section, interaction buttons, etc.), how image display is fixed, and how inline style mutations are tracked for later restoration.
+
+## Requirements
 
 ### Requirement: Hide reply/comment section
 The system SHALL hide all `[data-testid="cellInnerDiv"]` elements except the first one (the original article). The first cellInnerDiv SHALL use `position: relative` with no transform. All DOM style mutations SHALL be tracked in `window.__zenx.savedStyles` for later restoration.

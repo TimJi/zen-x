@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define when and how the action button toggles zen mode: URL scope where the button is enabled, per-tab state tracking across SPA and hard-reload navigations, and the lightbox auto-close affordance.
+
+## Requirements
 
 ### Requirement: Toggle zen mode on and off
 The extension SHALL toggle zen mode when the user clicks the action button. The first click SHALL activate zen mode, and a subsequent click SHALL deactivate it by running the restore script and removing injected CSS, without reloading the page.

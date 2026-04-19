@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Define Chrome Web Store listing artifacts: privacy policy document, store description text, and the no-data-collection posture ZenX commits to.
+
+## Requirements
 
 ### Requirement: Privacy policy document
 The project SHALL include a `PRIVACY.md` file in the repository root declaring that the extension does not collect, store, or transmit any user data.
