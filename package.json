@@ -2,7 +2,9 @@
   "name": "zenx-tests",
   "private": true,
   "scripts": {
-    "test": "npx playwright test",
+    "test": "npm run test:unit && npx playwright test",
+    "test:unit": "node --test tests/*.test.js",
+    "test:e2e": "npx playwright test",
     "test:install": "npx playwright install chromium"
   },
   "devDependencies": {

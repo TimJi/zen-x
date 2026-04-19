@@ -6,6 +6,7 @@ const authFile = '.x-auth.json';
 
 module.exports = defineConfig({
   testDir: './tests',
+  testMatch: /\.spec\.js$/,
   timeout: 60000,
   globalTimeout: 300000,
   retries: 1,

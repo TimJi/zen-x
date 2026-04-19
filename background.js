@@ -1,18 +1,9 @@
+importScripts('zen-state.js');
+const { tweetIdFromUrl, shouldClearZenState } = self.zenState;
+
 // 追蹤哪些 tab 處於 zen mode，以及進入 zen 時的推文 ID
 // （value 是推文 ID；用來判斷 SPA 導航是否仍在同一則推文脈絡內）
 const zenTabs = new Map();
-
-// 從 x.com URL 抽出推文 ID；非推文頁回傳 null
-function tweetIdFromUrl(urlStr) {
-  try {
-    const u = new URL(urlStr);
-    if (!u.hostname.endsWith('x.com')) return null;
-    const m = u.pathname.match(/\/(?:status|article)\/(\d+)/);
-    return m ? m[1] : null;
-  } catch {
-    return null;
-  }
-}
 
 // 在 x.com 的推文（/status/）與 X Article（/article/）頁面都啟用 action 按鈕
 // —— 涵蓋 lightbox 的 /article/<id>/media/<mediaId> 路徑，讓使用者在 lightbox 中也能切換 zen
@@ -80,10 +71,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 // 不清理的情境：點圖開 lightbox、關 lightbox 等 SPA 導航（URL 變，但推文 ID 相同）
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (!zenTabs.has(tabId)) return;
-  if (!changeInfo.url) return;
-  const currentId = zenTabs.get(tabId);
-  const newId = tweetIdFromUrl(changeInfo.url);
-  if (newId !== currentId) {
+  if (shouldClearZenState(zenTabs.get(tabId), changeInfo.url)) {
     zenTabs.delete(tabId);
   }
 });
