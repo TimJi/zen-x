@@ -1,19 +1,22 @@
 ZenX — One-click zen reading mode for X.com articles.
 
-Tired of distractions when reading posts on X.com? ZenX strips away the noise and gives you a clean, focused reading experience.
+Tired of distractions when reading posts on X.com (Twitter)? ZenX strips away the noise and gives you a clean, focused, distraction-free reading experience — like a reader mode built for X.
 
 ✦ What it does:
 • Hides comments, replies, and interaction buttons
-• Removes left navigation, right sidebar, and floating layers
+• Removes left navigation, right sidebar, and floating drawers (Grok, chat)
 • Hides Premium ads, Grok button, and sticky navigation bar
 • Expands the article to a comfortable reading width (golden ratio)
 • Fixes image display for full-width viewing
+• Click any image to open X's native image viewer — works seamlessly in Zen mode
 • Automatically scrolls to the top for a fresh start
+• Toggle on/off with a single click — exits cleanly without reloading the page
 
 ✦ How to use:
 1. Navigate to any post on X.com (x.com/*/status/*)
 2. Click the ZenX icon in your toolbar
 3. Enjoy distraction-free reading
+4. Click the icon again to restore the original page — no reload needed
 
 The extension button is only active on X.com article pages — it stays grayed out everywhere else, so it never gets in your way.
 
