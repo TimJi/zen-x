@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ZenX",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Distraction-free reader mode for X.com (Twitter) articles",
   "homepage_url": "https://github.com/TimJi/zen-x",
   "permissions": ["activeTab", "scripting", "declarativeContent"],
