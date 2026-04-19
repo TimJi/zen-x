@@ -33,8 +33,9 @@ header[role="banner"] {
   display: none !important;
 }
 
-/* === 隱藏右下角浮動按鈕 === */
-#layers {
+/* === 隱藏右下角浮動抽屜（Grok/chat/BottomBar），保留 lightbox dialog === */
+/* X 會把浮動 UI 放在 #layers > div[0]；開圖片 lightbox 時，會把 dialog 插到 #layers > div[1]（含 [role="dialog"]）。只隱藏不含 dialog 的 slot。 */
+#layers > div:not(:has([role="dialog"])) {
   display: none !important;
 }
 

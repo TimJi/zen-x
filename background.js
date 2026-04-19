@@ -1,5 +1,18 @@
-// 追蹤哪些 tab 處於 zen mode
-const zenTabs = new Set();
+// 追蹤哪些 tab 處於 zen mode，以及進入 zen 時的推文 ID
+// （value 是推文 ID；用來判斷 SPA 導航是否仍在同一則推文脈絡內）
+const zenTabs = new Map();
+
+// 從 x.com URL 抽出推文 ID；非推文頁回傳 null
+function tweetIdFromUrl(urlStr) {
+  try {
+    const u = new URL(urlStr);
+    if (!u.hostname.endsWith('x.com')) return null;
+    const m = u.pathname.match(/\/(?:status|article)\/(\d+)/);
+    return m ? m[1] : null;
+  } catch {
+    return null;
+  }
+}
 
 // 僅在 x.com/*/status/* 文章頁面啟用 action 按鈕
 chrome.runtime.onInstalled.addListener(() => {
@@ -42,7 +55,7 @@ chrome.action.onClicked.addListener(async (tab) => {
       target: { tabId: tab.id },
       files: ['zen-mode.js']
     });
-    zenTabs.add(tab.id);
+    zenTabs.set(tab.id, tweetIdFromUrl(tab.url));
   }
 });
 
@@ -51,9 +64,14 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   zenTabs.delete(tabId);
 });
 
-// 頁面 reload 或導航時清理狀態
+// Tab 導航到別則推文（或離開 x.com 推文脈絡）時才清理狀態
+// 不清理的情境：點圖開 lightbox、關 lightbox 等 SPA 導航（URL 變，但推文 ID 相同）
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (changeInfo.status === 'loading') {
+  if (!zenTabs.has(tabId)) return;
+  if (!changeInfo.url) return;
+  const currentId = zenTabs.get(tabId);
+  const newId = tweetIdFromUrl(changeInfo.url);
+  if (newId !== currentId) {
     zenTabs.delete(tabId);
   }
 });
