@@ -14,7 +14,8 @@ function tweetIdFromUrl(urlStr) {
   }
 }
 
-// 僅在 x.com/*/status/* 文章頁面啟用 action 按鈕
+// 在 x.com 的推文（/status/）與 X Article（/article/）頁面都啟用 action 按鈕
+// —— 涵蓋 lightbox 的 /article/<id>/media/<mediaId> 路徑，讓使用者在 lightbox 中也能切換 zen
 chrome.runtime.onInstalled.addListener(() => {
   chrome.action.disable();
 
@@ -24,6 +25,9 @@ chrome.runtime.onInstalled.addListener(() => {
         conditions: [
           new chrome.declarativeContent.PageStateMatcher({
             pageUrl: { hostSuffix: 'x.com', pathContains: '/status/' }
+          }),
+          new chrome.declarativeContent.PageStateMatcher({
+            pageUrl: { hostSuffix: 'x.com', pathContains: '/article/' }
           })
         ],
         actions: [new chrome.declarativeContent.ShowAction()]
@@ -56,6 +60,14 @@ chrome.action.onClicked.addListener(async (tab) => {
       files: ['zen-mode.js']
     });
     zenTabs.set(tab.id, tweetIdFromUrl(tab.url));
+  }
+
+  // 若目前在 lightbox 中（URL 含 /media/），自動關閉 lightbox 讓使用者立即看到 zen toggle 的結果
+  if (tab.url && tab.url.includes('/media/')) {
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => history.back()
+    });
   }
 });
 
