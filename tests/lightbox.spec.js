@@ -2,17 +2,7 @@
 // 回歸：zen mode 不能遮掉 image lightbox
 // （1.2.0 前的 bug：#layers { display: none } 把 X 渲染在 #layers 的 [role="dialog"] 整個藏掉）
 const { test, expect } = require('@playwright/test');
-const path = require('path');
-const fs = require('fs');
-
-const ARTICLE_URLS = [
-  'https://x.com/thedankoe/status/2010042119121957316',
-  'https://x.com/jimprosser/status/2029699731539255640',
-  'https://x.com/jiayuan_jy/status/2029851505583607961',
-];
-
-const cssPath = path.resolve(__dirname, '..', 'zen-mode.css');
-const jsPath = path.resolve(__dirname, '..', 'zen-mode.js');
+const { ARTICLE_URLS, injectZenMode } = require('./fixtures');
 
 let articlePage;
 let imageLinkSelector = null;
@@ -30,7 +20,6 @@ test.beforeAll(async ({ browser }, testInfo) => {
         .waitFor({ state: 'visible', timeout: 10000 });
       // 給 SPA 一點時間渲染推文內容（含圖片連結）
       await page.waitForTimeout(1500);
-      // X 的圖片連結 href 含 /photo/ 或 /media/
       const imgCount = await page.locator('a[href*="/photo/"], a[href*="/media/"]').count();
       if (imgCount > 0) {
         imageLinkSelector = 'a[href*="/photo/"], a[href*="/media/"]';
@@ -48,9 +37,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
     return;
   }
 
-  // 注入 zen mode
-  await articlePage.addStyleTag({ content: fs.readFileSync(cssPath, 'utf-8') });
-  await articlePage.evaluate(fs.readFileSync(jsPath, 'utf-8'));
+  await injectZenMode(articlePage);
   await articlePage.waitForTimeout(500);
 });
 
@@ -87,7 +74,6 @@ test('clicking image opens lightbox with [role="dialog"] visible inside #layers'
   // 點圖（X 會 pushState 到 /media/ 或 /photo/ 並把 dialog 插到 #layers）
   await articlePage.locator(imageLinkSelector).first().click();
 
-  // 等 dialog 出現
   await articlePage.locator('#layers [role="dialog"]').first()
     .waitFor({ state: 'attached', timeout: 5000 });
 
@@ -120,7 +106,6 @@ test('clicking image opens lightbox with [role="dialog"] visible inside #layers'
 test('lightbox close returns state (drawers still hidden, no dialog)', async () => {
   test.skip(!articlePage, 'No article page with image loaded');
 
-  // 按 Esc 關 lightbox
   await articlePage.keyboard.press('Escape');
   await articlePage.waitForTimeout(500);
 

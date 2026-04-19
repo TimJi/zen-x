@@ -1,9 +1,6 @@
-// ZenX — DOM 操作（CSS 規則已由 zen-mode.css 處理）
 (() => {
-  // 初始化狀態追蹤
   window.__zenx = { savedStyles: [], observer: null };
 
-  // 儲存原始 style 並設定新值
   function saveAndSet(el, prop, value, priority) {
     window.__zenx.savedStyles.push({
       el,
@@ -29,7 +26,6 @@
     }
   }
 
-  // 修正圖片顯示
   document.querySelectorAll('img.css-9pa8cd').forEach(img => {
     saveAndSet(img, 'opacity', '1');
     saveAndSet(img, 'position', 'static');
@@ -62,7 +58,6 @@
     }
   }
 
-  // 隱藏 Premium 廣告橫幅
   document.querySelectorAll('[role="status"]').forEach(el => {
     if (/premium|升級|upgrade/i.test(el.textContent)) {
       saveAndSet(el, 'display', 'none', 'important');
@@ -106,6 +101,5 @@
   observer.observe(document.body, { childList: true, subtree: true });
   window.__zenx.observer = observer;
 
-  // 回到頁面頂部
   window.scrollTo(0, 0);
 })();

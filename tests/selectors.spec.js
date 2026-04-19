@@ -1,11 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-
-const ARTICLE_URLS = [
-  'https://x.com/thedankoe/status/2010042119121957316',
-  'https://x.com/jimprosser/status/2029699731539255640',
-  'https://x.com/jiayuan_jy/status/2029851505583607961',
-];
+const { loadArticle } = require('./fixtures');
 
 const REQUIRED_SELECTORS = [
   '[data-testid="cellInnerDiv"]',
@@ -22,39 +17,21 @@ const OPTIONAL_SELECTORS = [
 ];
 
 let articlePage;
+let articleContext;
 
 test.beforeAll(async ({ browser }, testInfo) => {
   testInfo.setTimeout(120000);
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
-  let loaded = false;
-  for (const url of ARTICLE_URLS) {
-    try {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
-      const column = await page.locator('[data-testid="primaryColumn"]').first();
-      await column.waitFor({ state: 'visible', timeout: 10000 });
-      await page.locator('[data-testid="cellInnerDiv"]').first().waitFor({ state: 'attached', timeout: 10000 });
-      loaded = true;
-      break;
-    } catch {
-      continue;
-    }
-  }
-
-  if (!loaded) {
+  const { page, context } = await loadArticle(browser);
+  if (!page) {
     test.skip();
-    await context.close();
     return;
   }
-
   articlePage = page;
+  articleContext = context;
 });
 
 test.afterAll(async () => {
-  if (articlePage) {
-    await articlePage.context().close();
-  }
+  if (articleContext) await articleContext.close();
 });
 
 for (const selector of REQUIRED_SELECTORS) {
@@ -66,13 +43,14 @@ for (const selector of REQUIRED_SELECTORS) {
 }
 
 for (const selector of OPTIONAL_SELECTORS) {
-  test(`optional selector: ${selector}`, async () => {
+  test(`optional selector: ${selector}`, async ({}, testInfo) => {
     test.skip(!articlePage, 'No article page loaded');
     const count = await articlePage.locator(selector).count();
     if (count === 0) {
-      console.warn(`Optional selector "${selector}" not found — may need review`);
+      testInfo.annotations.push({
+        type: 'drift',
+        description: `Optional selector "${selector}" not found — may need review`,
+      });
     }
-    // Optional selectors don't fail the test
-    expect(true).toBe(true);
   });
 }

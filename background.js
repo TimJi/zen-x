@@ -1,8 +1,7 @@
 importScripts('zen-state.js');
 const { tweetIdFromUrl, shouldClearZenState } = self.zenState;
 
-// 追蹤哪些 tab 處於 zen mode，以及進入 zen 時的推文 ID
-// （value 是推文 ID；用來判斷 SPA 導航是否仍在同一則推文脈絡內）
+// value 是進入 zen 時的推文 ID，用來判斷 SPA 導航是否仍在同一則推文脈絡內
 const zenTabs = new Map();
 
 // 在 x.com 的推文（/status/）與 X Article（/article/）頁面都啟用 action 按鈕
@@ -27,7 +26,6 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-// 點擊 action 按鈕時 toggle zen mode
 chrome.action.onClicked.addListener(async (tab) => {
   // Reload 會把 injected CSS/JS 整個吹掉，但 zenTabs 不會隨之更新（reload 的 URL 與記錄相同）。
   // 點 icon 前先探 content script 是否還活著，避免第一下按鈕變成無聲 no-op。
@@ -45,40 +43,30 @@ chrome.action.onClicked.addListener(async (tab) => {
     if (!alive) zenTabs.delete(tab.id);
   }
 
+  const target = { tabId: tab.id };
   if (zenTabs.has(tab.id)) {
-    // 離開 zen：執行 restore 腳本並移除 CSS
     zenTabs.delete(tab.id);
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['zen-restore.js']
-    });
-    await chrome.scripting.removeCSS({
-      target: { tabId: tab.id },
-      files: ['zen-mode.css']
-    });
+    await Promise.all([
+      chrome.scripting.executeScript({ target, files: ['zen-restore.js'] }),
+      chrome.scripting.removeCSS({ target, files: ['zen-mode.css'] }),
+    ]);
   } else {
-    // 進入 zen：注入 CSS + JS
-    await chrome.scripting.insertCSS({
-      target: { tabId: tab.id },
-      files: ['zen-mode.css']
-    });
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['zen-mode.js']
-    });
+    await Promise.all([
+      chrome.scripting.insertCSS({ target, files: ['zen-mode.css'] }),
+      chrome.scripting.executeScript({ target, files: ['zen-mode.js'] }),
+    ]);
     zenTabs.set(tab.id, tweetIdFromUrl(tab.url));
   }
 
   // 若目前在 lightbox 中（URL 含 /media/），自動關閉 lightbox 讓使用者立即看到 zen toggle 的結果
   if (tab.url && tab.url.includes('/media/')) {
     await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
+      target,
       func: () => history.back()
     });
   }
 });
 
-// Tab 關閉時清理狀態
 chrome.tabs.onRemoved.addListener((tabId) => {
   zenTabs.delete(tabId);
 });
