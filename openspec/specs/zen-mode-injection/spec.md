@@ -8,11 +8,21 @@ The system SHALL hide all `[data-testid="cellInnerDiv"]` elements except the fir
 - **THEN** only the original article (first cellInnerDiv) SHALL be visible; all reply cells SHALL be hidden
 
 ### Requirement: Hide navigation and sidebar
-The system SHALL hide the left navigation bar (`header[role="banner"]`), the right sidebar (`[data-testid="sidebarColumn"]`), and the floating button layer (`#layers`).
+The system SHALL hide the left navigation bar (`header[role="banner"]`) and the right sidebar (`[data-testid="sidebarColumn"]`). In the floating-overlay container (`#layers`), the system SHALL hide only its direct children that do NOT contain a `[role="dialog"]` element, using the selector `#layers > div:not(:has([role="dialog"]))`. This keeps floating drawers (Grok, chat, BottomBar) hidden while preserving X's native modal overlays such as the image lightbox.
 
 #### Scenario: Article page with full UI
 - **WHEN** zen mode is activated
-- **THEN** left navigation, right sidebar, and floating layers SHALL not be visible
+- **THEN** left navigation and right sidebar SHALL not be visible
+- **AND** floating drawers (Grok, chat, BottomBar) rendered under `#layers` SHALL not be visible
+
+#### Scenario: Image lightbox opened in zen mode
+- **WHEN** zen mode is active and the user clicks an image, causing X to insert a `[role="dialog"]` into `#layers`
+- **THEN** the dialog slot SHALL be visible (not hidden by zen CSS)
+- **AND** drawer slots (those without a dialog) SHALL remain hidden
+
+#### Scenario: Image lightbox closed
+- **WHEN** the user closes the lightbox (Esc or ✕) and the dialog is removed from `#layers`
+- **THEN** the remaining drawer slots SHALL be hidden again
 
 ### Requirement: Golden ratio content width
 The system SHALL set the article content area to `max-width: var(--zen-content-max-width, 890px)` and `width: var(--zen-content-width, 61.8vw)`, centered horizontally. CSS variables SHALL be declared on `:root` for easy customization.

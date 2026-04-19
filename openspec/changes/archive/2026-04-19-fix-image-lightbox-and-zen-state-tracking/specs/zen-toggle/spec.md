@@ -1,17 +1,4 @@
-## ADDED Requirements
-
-### Requirement: Toggle zen mode on and off
-The extension SHALL toggle zen mode when the user clicks the action button. The first click SHALL activate zen mode, and a subsequent click SHALL deactivate it by running the restore script and removing injected CSS, without reloading the page.
-
-#### Scenario: Activate zen mode
-- **WHEN** the user clicks the action button and zen mode is not active on the current tab
-- **THEN** the extension SHALL inject zen-mode.css and execute zen-mode.js
-
-#### Scenario: Deactivate zen mode
-- **WHEN** the user clicks the action button and zen mode is already active on the current tab
-- **THEN** the extension SHALL execute zen-restore.js to reverse DOM changes
-- **AND** the extension SHALL call `chrome.scripting.removeCSS` to remove zen-mode.css
-- **AND** the extension SHALL NOT reload the page
+## MODIFIED Requirements
 
 ### Requirement: Per-tab state tracking
 The extension SHALL track zen mode state independently for each tab, keyed on the tweet ID at the moment of activation. A tweet ID SHALL be extracted from URL paths of the form `/status/<digits>` or `/article/<digits>` on `x.com`; any other URL yields a null tweet ID. Activating zen mode on one tab SHALL NOT affect other tabs. The extension SHALL clear a tab's zen state when the tab is closed, or when the tab navigates to a different tweet (tweet ID changes or becomes null). SPA navigation within the same tweet (e.g., opening or closing an image lightbox) SHALL NOT clear zen state. When the user clicks the action button, the extension SHALL verify that the page's `window.__zenx` marker is still present before treating the tab as zen-active; if the marker is missing (e.g., after a hard reload wiped injected content), the extension SHALL clear the stale state so the click enters zen fresh rather than becoming a silent no-op.
@@ -40,6 +27,8 @@ The extension SHALL track zen mode state independently for each tab, keyed on th
 - **WHEN** a tab is zen-active, the user presses F5 / Cmd+R to fully reload (wiping injected CSS/JS), and then clicks the action button
 - **THEN** the extension SHALL detect the missing `window.__zenx` marker and treat the tab as not-yet-zen
 - **AND** the extension SHALL enter zen mode on that same click (no intermediate "no-op" click)
+
+## ADDED Requirements
 
 ### Requirement: Action button enabled on status and article paths
 The extension SHALL enable the action button on URLs whose path contains `/status/` OR `/article/` on `x.com`. This covers both regular tweets, X Articles, and their media lightbox routes (e.g., `/article/<id>/media/<mediaId>`, `/status/<id>/photo/1`), so the user can toggle zen mode without first closing any overlay.

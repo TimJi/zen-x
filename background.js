@@ -29,6 +29,22 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // 點擊 action 按鈕時 toggle zen mode
 chrome.action.onClicked.addListener(async (tab) => {
+  // Reload 會把 injected CSS/JS 整個吹掉，但 zenTabs 不會隨之更新（reload 的 URL 與記錄相同）。
+  // 點 icon 前先探 content script 是否還活著，避免第一下按鈕變成無聲 no-op。
+  if (zenTabs.has(tab.id)) {
+    let alive = false;
+    try {
+      const [{ result } = {}] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => typeof window.__zenx !== 'undefined'
+      });
+      alive = !!result;
+    } catch {
+      alive = false;
+    }
+    if (!alive) zenTabs.delete(tab.id);
+  }
+
   if (zenTabs.has(tab.id)) {
     // 離開 zen：執行 restore 腳本並移除 CSS
     zenTabs.delete(tab.id);
